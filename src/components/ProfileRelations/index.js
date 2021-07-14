@@ -10,6 +10,7 @@ export const ProfileRelationsBoxWrapper = styled(Box)`
     list-style: none;
   }
   img {
+    display: cover;
     object-fit: cover;
     background-position: center center;
     width: 100%;

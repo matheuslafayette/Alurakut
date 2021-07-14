@@ -5,7 +5,6 @@ import NextLink from 'next/link';
 const BASE_URL = 'http://alurakut.vercel.app/';
 const v = '1';
 
-
 function Link({ href, children, ...props }) {
   return (
     <NextLink href={href} passHref>
@@ -264,7 +263,7 @@ export function OrkutNostalgicIconSet(props) {
         { name: 'Legal', slug: 'legal', icon: 'cool' },
         { name: 'Sexy', slug: 'sexy', icon: 'heart' },
       ].map(({ name, slug, icon }) => {
-        const total = props[slug] ? props[slug] : 1;
+        const total = props[slug] ? props[slug] : 3;
         return (
           <li key={`orkut__icon_set__${slug}`}>
             <span className="OrkutNostalgicIconSet__title">

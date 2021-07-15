@@ -1,7 +1,7 @@
 import React from 'react';
 import MainGrid from '../src/components/MainGrid'
 import Box from '../src/components/Box'
-import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/aluraCommons';
+import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet, ProfileFollowersBox, ProfileCommunitiesBox, ProfilePeopleBox } from '../src/lib/aluraCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
 function ProfileSidebar( proprieades ){
@@ -26,58 +26,43 @@ function ProfileSidebar( proprieades ){
   )
 }
 
-function ProfileRelationsBox( proprieades ){
-
-  return(
-    <ProfileRelationsBoxWrapper>
-
-            <h2 className="smallTitle">
-              {proprieades.title} ({proprieades.items.length})
-            </h2>
-
-            <ul>
-              {proprieades.items.slice(0, 6).map((itemAtual) => {
-
-                return (
-                  <li key={itemAtual.id}>
-
-                    <a href={`https:/github.com/${itemAtual.login}`}>
-
-                      <img src={`https://github.com/${itemAtual.login}.png`} />
-                      <span>{itemAtual.login}</span>
-
-                    </a>
-
-                  </li>)
-              })} 
-            </ul>
-          </ProfileRelationsBoxWrapper>
-  )
-}
-
 export default function Home() {
 
   const githubUser = "matheuslafayette";
-  const [comunidades, setComunidades] = React.useState([{
-
-    id: '741298798',
-    title: 'Eu odeio acordar cedo',
-    image: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
-  }]);
+  const [comunidades, setComunidades] = React.useState([]);
 
   const pessoasFavoritas = [
-    'omariosouto',
-    'peas',
-    'rafaballerini',
-    'marcobrunodev',
-    'juunegreiros',
-    'felipefialho'
+    {
+      name: 'omariosouto',
+      id: '4234'
+    },
+    {
+      name: 'peas',
+      id: '42344'
+    },
+    {
+      name: 'rafaballerini',
+      id: '42345'
+    },
+    {
+      name: 'marcobrunodev',
+      id: '42634'
+    },
+    {
+      name: 'juunegreiros',
+      id: '42734'
+    },
+        {
+      name: 'felipefialho',
+      id: '48234'
+    },
   ]
 
   const [seguidores, setSeguidores] = React.useState([]);
 
   React.useEffect( function(){
 
+    //GET
     const seguidores = fetch(`https://api.github.com/users/${githubUser}/followers`)
     .then( function( respostaServidor ){
 
@@ -87,6 +72,32 @@ export default function Home() {
 
       setSeguidores( respostaCompleta );
     })
+
+    //API GraphQL
+    fetch( 'https://graphql.datocms.com/', {
+
+      method: 'POST',
+      headers: {
+
+        'Authorization': '50c58713174b3eaba2c3c2813c6ac5',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ "query": `query{
+        allCommunities {
+          title
+          id
+          imageUrl
+        }
+      }` })
+    })
+    .then( (response) => response.json() ) //pega o retorno do response.json() e já retorna
+    .then( (respostaCompleta) => {
+
+      const comunidadesDato = respostaCompleta.data.allCommunities;
+      setComunidades( comunidadesDato );
+    })
+
   }, [])
 
   return (
@@ -119,12 +130,28 @@ export default function Home() {
 
               const comunidade = {
 
-                id: new Date().toISOString,
                 title: dadosDoForm.get('title'),
-                image: dadosDoForm.get('image'),
+                imageUrl: dadosDoForm.get('image'),
               }
-              const comunidadesAtualizadas = [...comunidades, comunidade];
-              setComunidades( comunidadesAtualizadas );
+
+              fetch('/api/comunidades', {
+
+                method: 'POST',
+                headers: {
+
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify( comunidade )
+              })
+              .then(async (response) => {
+
+                const dados = await response.json();
+                const comunidade = dados.registroCriado;
+                const comunidadesAtualizadas = [...comunidades, comunidade];
+                setComunidades( comunidadesAtualizadas );
+              })
+
+
             
             } } >
 
@@ -161,56 +188,11 @@ export default function Home() {
 
         <div className = "profileRelationsArea" style = { { gridArea: 'profileRelationsArea' } }>
 
-          <ProfileRelationsBox title = "Seguidores" items = {seguidores} />
+          <ProfileFollowersBox title = "Seguidores" items = {seguidores} />
 
-          <ProfileRelationsBoxWrapper>
+          <ProfileCommunitiesBox title = "Comunidades" items = {comunidades} />
 
-            <h2 className = "smallTitle">
-              Comunidades ({comunidades.length})
-            </h2>
-
-            <ul>
-              {comunidades.slice(0,6).map((itemAtual) => {
-
-                return (
-                  <li key={itemAtual.id}>
-
-                    <a href={`/users/${itemAtual.title}`}>
-
-                      <img src={itemAtual.image} />
-                      <span>{itemAtual.title}</span>
-
-                    </a>
-
-                  </li>)
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
-
-          <ProfileRelationsBoxWrapper>
-
-            <h2 className = "smallTitle">
-              Pessoas da comunidade ({pessoasFavoritas.length})
-            </h2>
-
-            <ul>
-              {pessoasFavoritas.slice(0,6).map((itemAtual) => {
-
-                return (
-                  <li key={itemAtual}>
-
-                    <a href={`/users/${itemAtual}`}>
-
-                      <img src={`https://github.com/${itemAtual}.png`} />
-                      <span>{itemAtual}</span>
-
-                    </a>
-
-                  </li>)
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
-
+          <ProfilePeopleBox title = "Pessoas da comunidade" items = {pessoasFavoritas} />
 
         </div>
     

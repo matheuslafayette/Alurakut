@@ -14,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     font-family: sans-serif;
-    background-color: #D9E6F6;
+    background: linear-gradient(to left, rgba(19, 52, 145, 0.75), #97287bc0 );
   }
 
   #__next{

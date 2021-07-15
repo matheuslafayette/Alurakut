@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import NextLink from 'next/link';
+import { ProfileRelationsBoxWrapper } from '../../src/components/ProfileRelations';
 
 const BASE_URL = 'http://alurakut.vercel.app/';
 const v = '1';
@@ -177,6 +178,103 @@ function AlurakutMenuProfileSidebar({ githubUser }) {
         <AlurakutProfileSidebarMenuDefault />
       </div>
     </div>
+  )
+}
+
+
+// ==========================================================================================
+// Followers bar
+// ==========================================================================================
+export function ProfileFollowersBox( proprieades ){
+
+  return(
+    <ProfileRelationsBoxWrapper>
+
+      <h2 className="smallTitle">
+        {proprieades.title} ({proprieades.items.length})
+      </h2>
+
+      <ul>
+        {proprieades.items.slice(0, 6).map((itemAtual) => {
+
+          return (
+            <li key={itemAtual.id}>
+
+              <a href={`https:/github.com/${itemAtual.login}`}>
+
+                <img src={`https://github.com/${itemAtual.login}.png`} />
+                <span>{itemAtual.login}</span>
+
+              </a>
+
+            </li>)
+        })}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  )
+}
+
+// ==========================================================================================
+// Communities bar
+// ==========================================================================================
+export function ProfileCommunitiesBox( proprieades ){
+
+  return(
+    <ProfileRelationsBoxWrapper>
+
+      <h2 className="smallTitle">
+        {proprieades.title} ({proprieades.items.length})
+      </h2>
+
+      <ul>
+        {proprieades.items.slice(0, 6).map((itemAtual) => {
+
+          return (
+            <li key={itemAtual.id}>
+
+              <a href={`/communities/${itemAtual.id}`}>
+
+                <img src={itemAtual.imageUrl} />
+                <span>{itemAtual.title}</span>
+
+              </a>
+
+            </li>)
+        })}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  )
+}
+
+// ==========================================================================================
+// People bar
+// ==========================================================================================
+export function ProfilePeopleBox( proprieades ){
+
+  return(
+    <ProfileRelationsBoxWrapper>
+
+      <h2 className="smallTitle">
+        {proprieades.title} ({proprieades.items.length})
+      </h2>
+
+      <ul>
+        {proprieades.items.slice(0, 6).map((itemAtual) => {
+
+          return (
+            <li key={itemAtual.id}>
+
+              <a href={`/users/${itemAtual.name}`}>
+
+                <img src={`https://github.com/${itemAtual.name}.png`} />
+                <span>{itemAtual.name}</span>
+
+              </a>
+
+            </li>)
+        })}
+      </ul>
+    </ProfileRelationsBoxWrapper>
   )
 }
 

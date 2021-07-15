@@ -4,7 +4,6 @@ import Box from '../src/components/Box'
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/aluraCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
-
 function ProfileSidebar( proprieades ){
 
   return(
@@ -27,6 +26,35 @@ function ProfileSidebar( proprieades ){
   )
 }
 
+function ProfileRelationsBox( proprieades ){
+
+  return(
+    <ProfileRelationsBoxWrapper>
+
+            <h2 className="smallTitle">
+              {proprieades.title} ({proprieades.items.length})
+            </h2>
+
+            <ul>
+              {proprieades.items.slice(0, 6).map((itemAtual) => {
+
+                return (
+                  <li key={itemAtual.id}>
+
+                    <a href={`https:/github.com/${itemAtual.login}`}>
+
+                      <img src={`https://github.com/${itemAtual.login}.png`} />
+                      <span>{itemAtual.login}</span>
+
+                    </a>
+
+                  </li>)
+              })} 
+            </ul>
+          </ProfileRelationsBoxWrapper>
+  )
+}
+
 export default function Home() {
 
   const githubUser = "matheuslafayette";
@@ -36,6 +64,7 @@ export default function Home() {
     title: 'Eu odeio acordar cedo',
     image: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
   }]);
+
   const pessoasFavoritas = [
     'omariosouto',
     'peas',
@@ -44,6 +73,21 @@ export default function Home() {
     'juunegreiros',
     'felipefialho'
   ]
+
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect( function(){
+
+    const seguidores = fetch(`https://api.github.com/users/${githubUser}/followers`)
+    .then( function( respostaServidor ){
+
+      return respostaServidor.json();
+    })
+    .then( function( respostaCompleta ) {
+
+      setSeguidores( respostaCompleta );
+    })
+  }, [])
 
   return (
 
@@ -116,7 +160,9 @@ export default function Home() {
         </div>
 
         <div className = "profileRelationsArea" style = { { gridArea: 'profileRelationsArea' } }>
-        
+
+          <ProfileRelationsBox title = "Seguidores" items = {seguidores} />
+
           <ProfileRelationsBoxWrapper>
 
             <h2 className = "smallTitle">
@@ -148,7 +194,7 @@ export default function Home() {
             </h2>
 
             <ul>
-              {pessoasFavoritas.map((itemAtual) => {
+              {pessoasFavoritas.slice(0,6).map((itemAtual) => {
 
                 return (
                   <li key={itemAtual}>
